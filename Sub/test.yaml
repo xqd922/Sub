@@ -1,0 +1,319 @@
+# 本地 HTTP 代理端口
+port: 7890
+
+# 本地 SOCKS5 代理端口
+socks-port: 7891
+
+# 本地透明代理端口
+redir-port: 7892
+
+# 是否允许局域网设备连接
+allow-lan: false
+
+# 代理模式，可以是 Rule（规则）、Global（全局）或 Direct（直连）
+mode: Rule
+
+# 日志级别，可以是 debug、info、warning 或 error
+log-level: info
+
+# 外部控制端口，用于 Clash Dashboard 等工具
+external-controller: 127.0.0.1:9090
+
+# DNS 配置
+dns:
+  enable: true       # 启用 DNS 解析
+  ipv6: false        # 禁用 IPv6
+  listen: 0.0.0.0:53 # 监听端口
+  enhanced-mode: fake-ip # 增强模式，使用假 IP
+  nameserver:        # DNS 服务器列表
+    - 114.114.114.114
+    - 8.8.8.8
+
+# 从 URL 获取代理配置
+proxy-providers:
+  my-provider:
+    type: http # 资源类型，这里使用 HTTP
+    url: "https://api.acaisbest.shop/api/v1/client/subscribe?token=ae37c582dd119187e775cc900406049a&name=Academy%20City%20Airport" # 代理配置文件的 URL 地址
+    interval: 3600 # 定时获取代理配置的间隔时间（秒）
+    #path: ./providers/my-provider.yaml # 本地缓存文件路径，启用后可避免频繁请求
+    health-check: # 配置健康检查
+      enable: true # 启用健康检查
+      url: http://www.gstatic.com/generate_204 # 用于检查代理健康状况的 URL
+      interval: 600 # 检查间隔时间（秒）
+
+# 代理组配置
+proxy-groups:
+  - name: "Proxy" # 代理组名称
+    type: select # 代理组类型，使用 select 手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Auto 代理组
+      - Auto
+      - Fallback
+      - LoadBanlance
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+
+  - name: "Auto" # 代理组名称
+    type: url-test # 代理组类型，使用 url-test 自动测试最佳代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    url: http://www.gstatic.com/generate_204 # 用于测试代理的 URL
+    interval: 300 # 测试间隔时间（秒）
+
+  - name: "Fallback" # 代理组名称
+    type: fallback # 代理组类型，使用 url-test 自动测试最佳代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    url: http://www.gstatic.com/generate_204 # 用于测试代理的 URL
+    interval: 300 # 测试间隔时间（秒）
+
+  - name: "LoadBanlance" # 代理组名称
+    type: load-balance # 代理组类型，使用 url-test 自动测试最佳代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    url: http://www.gstatic.com/generate_204 # 用于测试代理的 URL
+    interval: 300 # 测试间隔时间（秒）
+
+  - name: "Emby" # Emby 代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+
+  - name: "Streaming" # 流媒体代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+
+  - name: "Open AI" # 社交媒体代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+
+  - name: "Telegram" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+  
+  - name: "Spotify" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+  
+  - name: "Tiktok" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+  
+  - name: "Google" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - Proxy
+      - DIRECT
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+  
+  - name: "Microsoft" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - DIRECT
+      - Proxy
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+  
+  - name: "Apple" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - DIRECT
+      - Proxy
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+
+  - name: "Fall" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+    proxies: # 包含 Proxy 代理组
+      - DIRECT
+      - Proxy
+      - 🇭🇰 HK ⚡
+      - 🇨🇳 TW ⚡
+      - 🇯🇵 JP ⚡
+      - 🇸🇬 SG ⚡
+      - 🇺🇸 US ⚡
+  
+  name: "🇭🇰 HK ⚡" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+  
+  name: "🇨🇳 TW ⚡" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+  
+  name: "🇯🇵 JP ⚡" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+  
+  name: "🇸🇬 SG ⚡" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+  
+  name: "🇺🇸 US ⚡" # 默认代理组
+    type: select # 使用 select 类型手动选择代理
+    use: # 引用 proxy-providers 中的代理
+      - my-provider
+      
+# 规则提供者
+rule-providers:
+  Emby:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Emby.yaml"  # 规则集 URL
+    path: ./rules/Emby.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Open AI:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Open AI.yaml"  # 规则集 URL
+    path: ./rules/Emby.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Telegram:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Telegram.yaml"  # 规则集 URL
+    path: ./rules/Telegram.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Streaming:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Netflix.yaml"  # 规则集 URL
+    path: ./rules/Streaming.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Spotify:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Spotify.yaml"  # 规则集 URL
+    path: ./rules/Spotify.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Tiktok:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Tiktok.yaml"  # 规则集 URL
+    path: ./rules/tiktok.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Google:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Google.yaml"  # 规则集 URL
+    path: ./rules/Google.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+  Microsoft:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Microsoft.yaml"  # 规则集 URL
+    path: ./rules/Microsoft.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+  
+  Apple:
+    type: http  # 资源类型，这里使用 HTTP
+    behavior: classical  # 修改为 classical，以支持多种类型的规则
+    url: "https://raw.githubusercontent.com/xqd922/Sub-yaml/main/Apple.yaml"  # 规则集 URL
+    path: ./rules/Emby.yaml  # 本地缓存文件路径，使用 .yaml 以统一格式
+    interval: 86400  # 定时获取规则配置的间隔时间（秒）
+
+# 规则配置
+rules:
+  # 引用 Emby.yaml 规则集
+  - RULE-SET,Emby,Emby
+  - RULE-SET,Open AI,Open AI
+  - RULE-SET,Streaming,Streaming
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,Tiktok,Tiktok
+  - RULE-SET,Google,Google
+  - RULE-SET,Microsoft,Microsoft
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Fall,Fall
+  
+  # 中国大陆网站直连
+  - GEOIP,CN,DIRECT
+  
+  # 其他流量默认通过代理
+  - MATCH,Fall
