@@ -80,7 +80,7 @@ export const defaultConfig: ClashConfig = {
   'allow-lan': true,
   'mode': 'rule',
   'log-level': 'info',
-  'ipv6': false,
+  'ipv6': true,
   'unified-delay': false,
   'tcp-concurrent': true,
   'keep-alive-idle': 300,
