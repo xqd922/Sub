@@ -18,10 +18,18 @@ src/                          全部源码
       sub/route.ts            订阅转换
       shorten/route.ts        短链接生成
       s/[id]/route.ts         短链跳转
+      admin/                  后台管理 API（login/logout/session/stats/records/short-links/system）
+    sub/route.ts              订阅转换入口（/sub）
+    s/[id]/route.ts           短链跳转入口（/s/[id]）
     page.tsx                  首页（/）
+    admin/page.tsx            后台管理面板（/admin）
     layout.tsx                根布局
     globals.css
     favicon.ico
+  auth/                       管理员鉴权
+    session.ts                HMAC 会话令牌 + cookie 序列化（Web Crypto）
+    guard.ts                  requireAdmin 守卫 + 登录限速
+    login_log.ts              登录审计（存 KV）
   node/                       节点：解析、序列化、去重、格式化
     proto/                    协议解析器（每个文件一个协议）
       shadowsocks.ts          SS 协议
@@ -48,8 +56,10 @@ src/                          全部源码
   kv/                         KV 存储
     adapter.ts                KVStoreAdapter 接口 + RemoteKVStore + LocalKVStore
     store.ts                  getKV() 环境选择
-    records.ts                转换记录
+    operations.ts             底层读写 + 前缀扫描列举
+    records.ts                转换记录（含 listAllRecordsForAdmin 等管理函数）
     short_link.ts             短链接存储
+    maintenance.ts            pingKV + rebuildIndexes 索引重建
     types.ts                  KV 相关类型
     index.ts                  barrel
   network/                    网络
@@ -64,8 +74,11 @@ src/                          全部源码
     client.ts                 客户端检测（detectClientType）
   ui/                         前端组件
     home.tsx / copy_button.tsx / url_input.tsx / short_link.tsx / toast.tsx / error_boundary.tsx
+    admin_*.tsx               后台面板组件（dashboard/login/stats/records/short_links/tools/system）+ qr_code.tsx
   hooks/                      前端 hooks
     use_convert.ts / use_short_link.ts / use_toast.ts / use_clipboard.ts
+    use_admin_session.ts      管理员会话探测/登录/登出
+    use_admin_data.ts         后台数据加载与变更（含自动刷新 hook）
 tests/                        测试文件
 ```
 

@@ -1,5 +1,5 @@
 ﻿import * as client from '@/kv/operations'
-import { ConvertRecord, StatsData } from '@/kv/types'
+import { ConvertRecord, StatsData, DailyStats } from '@/kv/types'
 import { extractNameFromUrl } from '@/lib/utils'
 import { logger } from '@/lib/logger'
 
@@ -157,4 +157,87 @@ export async function getStats(): Promise<StatsData> {
     todayHits,
     activeRecords
   }
+}
+
+export async function listAllRecordsForAdmin(): Promise<ConvertRecord[]> {
+  if (!(await client.isAvailable())) {
+    return []
+  }
+
+  return client.fetchAllRecordsIncludingDeleted()
+}
+
+export async function setRecordEnabled(id: string, enabled: boolean): Promise<ConvertRecord | null> {
+  const record = await updateRecord(id, { deleted: !enabled })
+
+  if (record && enabled) {
+    await client.addToIndex(id)
+  }
+
+  return record
+}
+
+export async function deleteRecordPermanently(id: string): Promise<boolean> {
+  const record = await client.getRecord(id)
+  if (!record) return false
+
+  await client.deleteRecordById(id)
+  await client.removeFromIndex(id)
+  return true
+}
+
+export async function createRecordManually(url: string, name?: string): Promise<ConvertRecord | null> {
+  if (!(await client.isAvailable())) {
+    return null
+  }
+
+  try {
+    const id = await generateRecordId(url)
+    const now = Date.now()
+
+    const existing = await client.getRecord(id)
+    if (existing) {
+      const updated = await updateRecord(id, name ? { name } : {})
+      return updated || existing
+    }
+
+    const record: ConvertRecord = {
+      id,
+      originalUrl: url,
+      name: name || extractNameFromUrl(url),
+      clientType: 'admin',
+      createdAt: now,
+      updatedAt: now,
+      lastAccess: now,
+      hits: 0,
+      nodeCount: 0,
+      lastIp: ''
+    }
+
+    await client.saveRecord(record)
+    await client.addToIndex(id)
+
+    return record
+  } catch (error) {
+    logger.error('[RecordService] 手动登记订阅失败:', error)
+    return null
+  }
+}
+
+export async function getRecentDailyStats(days: number): Promise<DailyStats[]> {
+  const results: DailyStats[] = []
+  const now = new Date()
+
+  for (let i = 0; i < days; i++) {
+    const date = new Date(now)
+    date.setDate(date.getDate() - i)
+    const dateStr = date.toISOString().slice(0, 10)
+
+    const stats = await client.getDailyStats(dateStr)
+    if (stats) {
+      results.push(stats)
+    }
+  }
+
+  return results.sort((a, b) => a.date.localeCompare(b.date))
 }

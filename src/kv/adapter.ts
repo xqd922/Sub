@@ -123,7 +123,9 @@ class LocalKVStore implements KVStoreAdapter {
   }
 }
 
-let kvStore: KVStoreAdapter | null = null
+// next dev 下每个边缘路由沙箱持有独立的模块实例，
+// 把单例挂到 globalThis 上保证跨路由共享同一份本地存储
+const globalForKV = globalThis as unknown as { __subKVStore?: KVStoreAdapter }
 
 function hasRemoteKVConfig(): boolean {
   const hasAccountId = !!(process.env.CF_ACCOUNT_ID || process.env.CLOUDFLARE_ACCOUNT_ID)
@@ -134,14 +136,14 @@ function hasRemoteKVConfig(): boolean {
 }
 
 export function getLocalKV(): KVStoreAdapter {
-  if (!kvStore) {
+  if (!globalForKV.__subKVStore) {
     if (hasRemoteKVConfig()) {
-      kvStore = new RemoteKVStore()
+      globalForKV.__subKVStore = new RemoteKVStore()
       console.log('[RemoteKV] 已连接到 Cloudflare KV')
     } else {
-      kvStore = new LocalKVStore()
+      globalForKV.__subKVStore = new LocalKVStore()
       console.log('[LocalKV] 已初始化本地 KV Mock 存储')
     }
   }
-  return kvStore
+  return globalForKV.__subKVStore
 }

@@ -108,6 +108,33 @@ export async function getAllRecords(): Promise<ConvertRecord[]> {
   return records.sort((a, b) => b.lastAccess - a.lastAccess)
 }
 
+export async function listKeysByPrefix(prefix: string): Promise<string[]> {
+  const kv = await getKV()
+  if (!kv) return []
+
+  try {
+    const result = await kv.list({ prefix })
+    return result.keys.map(key => key.name)
+  } catch (error) {
+    logger.error('[KV] 列举键失败:', error)
+    return []
+  }
+}
+
+export async function fetchAllRecordsIncludingDeleted(): Promise<ConvertRecord[]> {
+  const keys = await listKeysByPrefix(KV_PREFIX.RECORD)
+  const ids = keys
+    .filter(name => name.startsWith(KV_PREFIX.RECORD))
+    .map(name => name.slice(KV_PREFIX.RECORD.length))
+
+  const recordPromises = ids.map(id => getRecord(id))
+  const recordResults = await Promise.all(recordPromises)
+
+  const records = recordResults.filter((r): r is ConvertRecord => r !== null)
+
+  return records.sort((a, b) => b.lastAccess - a.lastAccess)
+}
+
 export async function getDailyStats(date: string): Promise<DailyStats | null> {
   const kv = await getKV()
   if (!kv) return null
