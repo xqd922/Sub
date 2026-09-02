@@ -52,6 +52,7 @@ export function generateSingboxConfig(proxies: Proxy[]) {
   const validOutbounds = makeOutboundTagsUnique(convertedOutbounds)
 
   return {
+    $schema: "https://sing-box.sagernet.org/schema.json",
     log: {
       disabled: false,
       level: "info",
@@ -94,12 +95,6 @@ export function generateSingboxConfig(proxies: Proxy[]) {
           action: "predefined"
         },
         {
-          query_type: ["A", "AAAA"],
-          action: "route",
-          rewrite_ttl: 60,
-          server: "fakeip"
-        },
-        {
           clash_mode: "Direct",
           action: "route",
           server: "local"
@@ -118,10 +113,17 @@ export function generateSingboxConfig(proxies: Proxy[]) {
           rule_set: "ext-cn-domain",
           action: "route",
           server: "local"
+        },
+        {
+          query_type: ["A", "AAAA"],
+          action: "route",
+          rewrite_ttl: 60,
+          server: "fakeip"
         }
       ],
       final: "remote",
-      strategy: "prefer_ipv4"
+      strategy: "prefer_ipv4",
+      optimistic: true
     },
     inbounds: [
       {
@@ -154,7 +156,7 @@ export function generateSingboxConfig(proxies: Proxy[]) {
         tag: "Manual",
         outbounds: ["Auto", ...validOutbounds.map(o => o.tag)],
         default: "Auto",
-        interrupt_exist_connections: false
+        interrupt_exist_connections: true
       },
       {
         type: "urltest",
@@ -187,8 +189,7 @@ export function generateSingboxConfig(proxies: Proxy[]) {
         {
           network: "udp",
           port: 443,
-          action: "reject",
-          method: "default"
+          action: "reject"
         },
         {
           clash_mode: "Direct",
@@ -231,6 +232,7 @@ export function generateSingboxConfig(proxies: Proxy[]) {
       ],
       final: "Manual",
       auto_detect_interface: true,
+      // 规则集与 dashboard 下载走代理（http_clients.rule-set-download）
       default_http_client: "rule-set-download",
       default_domain_resolver: {
         server: "local"
