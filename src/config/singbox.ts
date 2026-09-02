@@ -176,7 +176,20 @@ export function generateSingboxConfig(proxies: Proxy[]) {
     route: {
       rules: [
         {
-          action: "sniff"
+          network: "udp",
+          port: 443,
+          action: "reject"
+        },
+        {
+          // Telegram 直连路由，置于 sniff 之前：MTProto 私有协议无法被嗅探，
+          // 放在嗅探后会让每条连接白等 sniff timeout
+          rule_set: ["telegram", "telegram-ip"],
+          action: "route",
+          outbound: "Manual"
+        },
+        {
+          action: "sniff",
+          timeout: "50ms"
         },
         {
           protocol: "dns",
@@ -184,11 +197,6 @@ export function generateSingboxConfig(proxies: Proxy[]) {
         },
         {
           rule_set: ["AdGuardSDNSFilter"],
-          action: "reject"
-        },
-        {
-          network: "udp",
-          port: 443,
           action: "reject"
         },
         {
@@ -261,6 +269,18 @@ export function generateSingboxConfig(proxies: Proxy[]) {
           type: "remote",
           format: "source",
           url: "https://gist.githubusercontent.com/xmdhs/71fc5ff6ef29f5ecaf2c52b8de5c3172/raw/chrome-doh.json"
+        },
+        {
+          tag: "telegram",
+          type: "remote",
+          format: "binary",
+          url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/telegram.srs"
+        },
+        {
+          tag: "telegram-ip",
+          type: "remote",
+          format: "binary",
+          url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/telegram.srs"
         },
         {
           tag: "ext-cn-domain",
