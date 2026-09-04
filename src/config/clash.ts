@@ -173,7 +173,7 @@ export const defaultConfig: ClashConfig = {
       'type': 'http',
       'behavior': 'domain',
       'format': 'mrs',
-      'url': 'https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/fakeip-filter.mrs',
+      'url': 'https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs',
       'path': './rule_providers/fakeip_filter.mrs',
       'interval': 86400
     },
