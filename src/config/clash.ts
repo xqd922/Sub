@@ -37,8 +37,7 @@ export function generateProxyGroups(proxies: Proxy[], isAirportSubscription: boo
       url: 'https://www.gstatic.com/generate_204',
       interval: 300,
       tolerance: 50,
-      lazy: true,
-      hidden: true
+      lazy: true
     },
     {
       name: 'Emby',
@@ -60,8 +59,7 @@ export function generateProxyGroups(proxies: Proxy[], isAirportSubscription: boo
       url: 'https://www.gstatic.com/generate_204',
       interval: 300,
       tolerance: 50,
-      lazy: true,
-      hidden: true
+      lazy: true
     })
   }
 
@@ -73,8 +71,7 @@ export function generateProxyGroups(proxies: Proxy[], isAirportSubscription: boo
       url: 'https://www.gstatic.com/generate_204',
       interval: 300,
       tolerance: 50,
-      lazy: true,
-      hidden: true
+      lazy: true
     })
   }
 
