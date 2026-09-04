@@ -50,7 +50,7 @@ describe('renderConversionResponse', () => {
       .filter((rule: { server?: string }) => rule.server)
       .every((rule: { action?: string }) => rule.action === 'route')).toBe(true)
     expect(config.dns.rules.find((rule: { server?: string }) => rule.server === 'fakeip').rewrite_ttl).toBe(60)
-    expect(config.inbounds[0]).not.toHaveProperty('endpoint_independent_nat')
+    expect(config.inbounds[0].endpoint_independent_nat).toBe(true)
     expect(config.inbounds[0].tag).toBe('tun-in')
     expect(config.route.rules
       .filter((rule: { outbound?: string }) => rule.outbound)

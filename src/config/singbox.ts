@@ -85,6 +85,7 @@ export function generateSingboxConfig(proxies: Proxy[]) {
           inet6_range: "fc00::/18"
         }
       ],
+      timeout: "5s",
       rules: [
         {
           rule_set: ["AdGuardSDNSFilter", "chrome-doh"],
@@ -132,7 +133,8 @@ export function generateSingboxConfig(proxies: Proxy[]) {
         address: ["172.19.0.1/30", "fdfe:dcba:9876::1/126"],
         strict_route: true,
         mtu: 9000,
-        auto_route: true
+        auto_route: true,
+        endpoint_independent_nat: true
       },
       {
         type: "socks",
@@ -176,8 +178,13 @@ export function generateSingboxConfig(proxies: Proxy[]) {
     route: {
       rules: [
         {
-          network: "udp",
-          port: 443,
+          // 仅拦截国外 QUIC，国内域名/IP 豁免（B站、抖音等走 QUIC 直连）
+          type: "logical",
+          mode: "and",
+          rules: [
+            { network: "udp", port: 443 },
+            { invert: true, rule_set: ["geosite-cn", "ext-cn-domain", "geoip-cn"] }
+          ],
           action: "reject"
         },
         {
