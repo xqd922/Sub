@@ -77,6 +77,8 @@ export interface ProxyGroup {
   url?: string
   interval?: number
   tolerance?: number
+  lazy?: boolean
+  hidden?: boolean
 }
 
 export interface RuleProvider {
