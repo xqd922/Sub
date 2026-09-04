@@ -9,6 +9,7 @@ export interface DnsConfig {
   'default-nameserver'?: string[]
   'enhanced-mode'?: string
   'fake-ip-range': string
+  'fake-ip-range6'?: string
   'use-hosts': boolean
   'respect-rules'?: boolean
   'proxy-server-nameserver'?: string[]
@@ -54,7 +55,7 @@ export interface ClashConfig {
   'proxy-groups': ProxyGroup[]
   rules: string[]
   'rule-providers'?: Record<string, RuleProvider>
-  'hosts'?: Record<string, string[]>
+  'hosts'?: Record<string, string | string[]>
   sniffer?: {
     enable?: boolean
     sniff?: {

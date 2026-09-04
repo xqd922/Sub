@@ -113,6 +113,7 @@ export const defaultConfig: ClashConfig = {
     'listen': '[::]:1053',
     'enhanced-mode': 'fake-ip',
     'fake-ip-range': '198.18.0.1/16',
+    'fake-ip-range6': '2001:2::1/48',
     'proxy-server-nameserver': ['https://doh.pub/dns-query'],
     'nameserver': ['https://dns.alidns.com/dns-query'],
     'nameserver-policy': {
@@ -124,30 +125,19 @@ export const defaultConfig: ClashConfig = {
     'direct-nameserver': ['system'],
     'fake-ip-filter': [
       'rule-set:private',
+      'rule-set:fakeip-filter',
       'rule-set:tencent',
-      'short.weixin.qq.com',
-      'szshort.weixin.qq.com',
-      'szextshort.weixin.qq.com',
-      'szminorshort.weixin.qq.com',
-      'mp.weixin.qq.com',
-      '+.qpic.cn',
-      '+.qlogo.cn',
-      '+.gtimg.com',
-      '+.idqqimg.com',
-      '+.myqcloud.com',
-      '+.wechat.com',
-      '+.servicewechat.com',
-      '+.tenpay.com',
-      '+.qq.com',
-      '+.market.xiaomi.com',
-      'lancache.steamcontent.com',
-      '+.edu.cn'
+      'rule-set:geolocation-cn'
     ]
   },
   'hosts': {
     'dns.alidns.com': ['223.5.5.5', '223.6.6.6'],
     'doh.pub': ['1.12.12.21', '120.53.53.53'],
-    'dns.google': ['8.8.8.8', '8.8.4.4']
+    'dns.google': ['8.8.8.8', '8.8.4.4'],
+    'services.googleapis.cn': 'services.googleapis.com',
+    '+.mcdn.bilivideo.com': ['0.0.0.0'],
+    '+.mcdn.bilivideo.cn': ['0.0.0.0'],
+    '+.h2.smtcdns.net': ['0.0.0.0']
   },
   'proxies': [],
   'proxy-groups': [],
@@ -174,6 +164,22 @@ export const defaultConfig: ClashConfig = {
       'format': 'mrs',
       'url': 'https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tencent.mrs',
       'path': './rule_providers/tencent.mrs',
+      'interval': 86400
+    },
+    'fakeip-filter': {
+      'type': 'http',
+      'behavior': 'domain',
+      'format': 'mrs',
+      'url': 'https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/fakeip-filter.mrs',
+      'path': './rule_providers/fakeip_filter.mrs',
+      'interval': 86400
+    },
+    'geolocation-cn': {
+      'type': 'http',
+      'behavior': 'domain',
+      'format': 'mrs',
+      'url': 'https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-cn.mrs',
+      'path': './rule_providers/geolocation_cn.mrs',
       'interval': 86400
     },
     'ads': {
@@ -321,7 +327,7 @@ export const defaultConfig: ClashConfig = {
     'RULE-SET,tencent,DIRECT',
     'RULE-SET,ads,REJECT',
 
-    'AND,((DST-PORT,443),(NETWORK,UDP)),REJECT',
+    'AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,cn),(RULE-SET,cn-ip,no-resolve)))))),REJECT',
 
     'DOMAIN,sub.xqd.pp.ua,DIRECT',
     'DOMAIN,1001.pp.ua,DIRECT',
